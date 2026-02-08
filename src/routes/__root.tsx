@@ -37,16 +37,14 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <Box sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+    <Box sx={{ minHeight: '100vh', width: '100%', position: 'relative' }}>
       <NavBar />
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          height: '100vh',
-          overflowY: 'auto',
+          minHeight: '100vh',
+          width: '100%',
           backgroundColor: '#f8fafc',
-          transition: 'all 0.3s ease',
         }}
       >
         <Outlet />

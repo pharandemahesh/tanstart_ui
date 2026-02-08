@@ -1,115 +1,137 @@
+import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, Typography, Tooltip, useTheme, alpha } from '@mui/material';
+import { Box, useTheme, alpha, IconButton, Typography } from '@mui/material';
 import DashboardRootIcon from '@mui/icons-material/DashboardRounded';
 import AnalyticsIcon from '@mui/icons-material/AnalyticsRounded';
 import DatabaseIcon from '@mui/icons-material/StorageRounded';
 import SettingsIcon from '@mui/icons-material/SettingsRounded';
-
-const drawerWidth = 70;
+import MenuIcon from '@mui/icons-material/MenuRounded';
 
 export default function NavBar() {
     const theme = useTheme();
+    const [isHovered, setIsHovered] = useState(false);
 
     const navItems = [
         { label: 'Dashboard', icon: <DashboardRootIcon />, path: '/' },
         { label: 'Charts', icon: <AnalyticsIcon />, path: '/charts/' },
         { label: 'Data', icon: <DatabaseIcon />, path: '/data' },
         { label: 'Settings', icon: <SettingsIcon />, path: '/settings/' },
-    ];
+    ].reverse();
+
+    // Radial Menu Settings
+    const radius = 90; // Slightly increased to fit text
+    const startAngle = -15; // Shifted clockwise
+    const endAngle = 105; // Shifted counter-clockwise
 
     return (
-        <Drawer
-            variant="permanent"
-            anchor="left"
+        <Box
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             sx={{
-                width: drawerWidth,
-                flexShrink: 0,
-                '& .MuiDrawer-paper': {
-                    width: drawerWidth,
-                    boxSizing: 'border-box',
-                    backgroundColor: alpha(theme.palette.background.paper, 0.9),
-                    backdropFilter: 'blur(12px)',
-                    borderRight: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                    borderLeft: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    py: 2,
-                    boxShadow: '4px 0 20px rgba(0,0,0,0.05)',
-                    overflowX: 'hidden', // Remove horizontal scroll
-                },
+                position: 'fixed',
+                bottom: 32,
+                left: 32,
+                zIndex: theme.zIndex.drawer + 1,
+                width: 64,
+                height: 64,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
             }}
         >
-            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                <List sx={{ width: '100%', p: 0.5 }}>
-                    {navItems.map((item) => (
-                        <ListItem key={item.label} disablePadding sx={{ mb: 1, display: 'block' }}>
-                            <Tooltip title={item.label} placement="right" arrow>
-                                <ListItemButton
-                                    component={Link}
-                                    to={item.path}
-                                    preload="intent"
-                                    activeProps={{
-                                        style: {
-                                            backgroundColor: theme.palette.primary.main,
-                                            color: '#fff',
-                                        }
-                                    }}
-                                    inactiveProps={{
-                                        style: {
-                                            color: theme.palette.text.secondary,
-                                        }
-                                    }}
-                                    sx={{
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        borderRadius: '12px',
-                                        transition: 'all 0.2s ease',
-                                        minHeight: '60px',
-                                        p: 1,
-                                        mx: 'auto',
-                                        width: '100%',
-                                        '&:hover': {
-                                            backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                                            color: theme.palette.primary.main,
-                                        },
-                                        '&.active': {
-                                            boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`,
-                                        }
-                                    }}
-                                >
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            color: 'inherit',
-                                            mb: 0.2,
-                                            '& svg': {
-                                                fontSize: '1.4rem'
-                                            }
-                                        }}
-                                    >
-                                        {item.icon}
-                                    </ListItemIcon>
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            fontWeight: 700,
-                                            fontSize: '0.5rem',
-                                            letterSpacing: '0.02em',
-                                            textAlign: 'center',
-                                            lineHeight: 1,
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                    >
-                                        {item.label}
-                                    </Typography>
-                                </ListItemButton>
-                            </Tooltip>
-                        </ListItem>
-                    ))}
-                </List>
-            </Box>
-        </Drawer >
+            {/* Radial Navigation Items */}
+            {navItems.map((item, index) => {
+                const angle = startAngle + (index * (endAngle - startAngle)) / (navItems.length - 1);
+                const angleRad = (angle * Math.PI) / 180;
+                const x = Math.cos(angleRad) * radius;
+                const y = -Math.sin(angleRad) * radius;
+
+                return (
+                    <IconButton
+                        key={item.label}
+                        component={Link}
+                        to={item.path}
+                        preload="intent"
+                        activeProps={{
+                            style: {
+                                backgroundColor: theme.palette.primary.main,
+                                color: '#fff',
+                                transform: `translate(${x}px, ${y}px) scale(1.1)`,
+                                boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.4)}`,
+                            }
+                        }}
+                        inactiveProps={{
+                            style: {
+                                color: theme.palette.text.primary,
+                                backgroundColor: alpha(theme.palette.background.paper, 0.95),
+                            }
+                        }}
+                        sx={{
+                            position: 'absolute',
+                            width: 56,
+                            height: 56,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            borderRadius: '22px', // Squaricle shape
+                            backdropFilter: 'blur(12px)',
+                            border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                            transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                            transform: isHovered
+                                ? `translate(${x}px, ${y}px) scale(1)`
+                                : 'translate(0, 0) scale(0)',
+                            opacity: isHovered ? 1 : 0,
+                            zIndex: isHovered ? 1 : -1,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            '&:hover': {
+                                backgroundColor: theme.palette.primary.light,
+                                color: '#fff',
+                                transform: `translate(${x}px, ${y}px) scale(1.1)`,
+                            },
+                        }}
+                    >
+                        <Box sx={{ fontSize: '1.2rem', lineHeight: 1, mb: 0.2 }}>
+                            {item.icon}
+                        </Box>
+                        <Typography
+                            sx={{
+                                fontSize: '0.4rem',
+                                fontWeight: 800,
+                                textTransform: 'uppercase',
+                                lineHeight: 1,
+                                letterSpacing: '0.02em'
+                            }}
+                        >
+                            {item.label}
+                        </Typography>
+                    </IconButton>
+                );
+            })}
+
+            {/* Main Center Trigger */}
+            <IconButton
+                sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '24px', // Squaricle shape
+                    backgroundColor: isHovered ? theme.palette.primary.main : alpha(theme.palette.background.paper, 0.9),
+                    color: isHovered ? '#fff' : theme.palette.text.primary,
+                    boxShadow: isHovered ? '0 12px 40px rgba(0,0,0,0.2)' : '0 8px 32px rgba(0,0,0,0.15)',
+                    backdropFilter: 'blur(16px)',
+                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    zIndex: 2,
+                    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                    '&:hover': {
+                        backgroundColor: isHovered ? theme.palette.primary.main : alpha(theme.palette.background.paper, 0.9),
+                    }
+                }}
+            >
+                <MenuIcon sx={{
+                    fontSize: '2.2rem',
+                    transform: isHovered ? 'rotate(90deg)' : 'none',
+                    transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                }} />
+            </IconButton>
+        </Box>
     );
 }
