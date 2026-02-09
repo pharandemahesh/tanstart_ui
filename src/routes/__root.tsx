@@ -1,6 +1,6 @@
-import { HeadContent, Scripts, createRootRoute, Outlet } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { Box } from '@mui/material'
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -8,7 +8,11 @@ import NavBar from '../view/nav'
 
 import appCss from '../styles.css?url'
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  queryClient: QueryClient
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       {
@@ -36,20 +40,24 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  const { queryClient } = Route.useRouteContext()
+
   return (
-    <Box sx={{ minHeight: '100vh', width: '100%', position: 'relative' }}>
-      <NavBar />
-      <Box
-        component="main"
-        sx={{
-          minHeight: '100vh',
-          width: '100%',
-          backgroundColor: '#f8fafc',
-        }}
-      >
-        <Outlet />
+    <QueryClientProvider client={queryClient}>
+      <Box sx={{ minHeight: '100vh', width: '100%', position: 'relative' }}>
+        <NavBar />
+        <Box
+          component="main"
+          sx={{
+            minHeight: '100vh',
+            width: '100%',
+            backgroundColor: '#f8fafc',
+          }}
+        >
+          <Outlet />
+        </Box>
       </Box>
-    </Box>
+    </QueryClientProvider>
   )
 }
 
