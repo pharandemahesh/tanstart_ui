@@ -1,6 +1,10 @@
-import { Box, Typography, Paper, Container } from '@mui/material';
+import { Box, Typography, Paper, Container, CircularProgress } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { helloWorldQueryOptions } from '../../data/helloworld';
 
 export default function DataView() {
+    const { data, isLoading, error } = useQuery(helloWorldQueryOptions());
+
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Paper
@@ -23,11 +27,35 @@ export default function DataView() {
                 }}
             >
                 <Typography variant="h2" component="h1" gutterBottom fontWeight="800" sx={{ letterSpacing: '-0.02em' }}>
-                    DATA
+                    DATA444
                 </Typography>
-                <Typography variant="h5" component="p" sx={{ opacity: 0.9, fontWeight: 300 }}>
+                <Typography variant="h5" component="p" sx={{ opacity: 0.9, fontWeight: 300, mb: 2 }}>
                     Manage and visualize your core datasets efficiently.
                 </Typography>
+
+                <Box sx={{ width: '100%', mt: 2, textAlign: 'center' }}>
+                    {isLoading ? (
+                        <CircularProgress color="inherit" size={24} />
+                    ) : error ? (
+                        <Typography color="error" sx={{ bgcolor: 'rgba(255,255,255,0.9)', p: 1, borderRadius: 1 }}>
+                            Error: {error.message}
+                        </Typography>
+                    ) : (
+                        <Box sx={{
+                            bgcolor: 'rgba(255,255,255,0.1)',
+                            p: 2,
+                            borderRadius: 2,
+                            fontFamily: 'monospace',
+                            textAlign: 'left',
+                            width: '100%',
+                            overflowX: 'auto'
+                        }}>
+                            <pre style={{ margin: 0 }}>
+                                {JSON.stringify(data, null, 2)}
+                            </pre>
+                        </Box>
+                    )}
+                </Box>
                 <Box sx={{ mt: 4, width: '100%', height: '2px', bgcolor: 'rgba(255,255,255,0.2)' }} />
             </Paper>
         </Container>
