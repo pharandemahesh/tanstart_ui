@@ -6,6 +6,7 @@ import AnalyticsIcon from '@mui/icons-material/AnalyticsRounded';
 import DatabaseIcon from '@mui/icons-material/StorageRounded';
 import SettingsIcon from '@mui/icons-material/SettingsRounded';
 import MenuIcon from '@mui/icons-material/MenuRounded';
+import CloudIcon from '@mui/icons-material/CloudDownloadRounded';
 
 export default function NavBar() {
     const theme = useTheme();
@@ -15,6 +16,7 @@ export default function NavBar() {
         { label: 'Dashboard', icon: <DashboardRootIcon />, path: '/' },
         { label: 'Charts', icon: <AnalyticsIcon />, path: '/charts/' },
         { label: 'Data', icon: <DatabaseIcon />, path: '/data' },
+        { label: 'SSR', icon: <CloudIcon />, path: '/ssr' },
         { label: 'Settings', icon: <SettingsIcon />, path: '/settings/' },
     ].reverse();
 

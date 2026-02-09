@@ -1,0 +1,38 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
+import { Typography, Paper, Container } from '@mui/material'
+
+/**
+ * DEBUG STEP: Re-introducing createServerFn with minimal data.
+ */
+const getTestMessage = createServerFn({ method: 'GET' })
+  .handler(async () => {
+    return "Hello from the server function!"
+  })
+
+export const Route = createFileRoute('/ssr')({
+  loader: async () => {
+    const message = await getTestMessage()
+    return {
+      message,
+      timestamp: new Date().toLocaleString(),
+    }
+  },
+  component: SSRComponent,
+})
+
+function SSRComponent() {
+  const data = Route.useLoaderData()
+
+  return (
+    <Container maxWidth="md" sx={{ py: 8, marginLeft: '70px' }}>
+      <Typography variant="h3" fontWeight={800} gutterBottom>
+        Minimal Server Function Test
+      </Typography>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        <Typography variant="h6">{data.message}</Typography>
+        <Typography variant="caption">{data.timestamp}</Typography>
+      </Paper>
+    </Container>
+  )
+}
