@@ -1,13 +1,25 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { Typography, Paper, Container } from '@mui/material'
+import { prisma } from '../lib/db'
 
 /**
  * DEBUG STEP: Re-introducing createServerFn with minimal data.
  */
 const getTestMessage = createServerFn({ method: 'GET' })
   .handler(async () => {
-    return "Hello from the server function!"
+    // Check if we have any messages, if not, create one
+    let message = await prisma.message.findFirst({
+      orderBy: { createdAt: 'desc' }
+    })
+
+    if (!message) {
+      message = await prisma.message.create({
+        data: { text: "Hello from the SQLite Database!" }
+      })
+    }
+
+    return message.text
   })
 
 export const Route = createFileRoute('/ssr')({
